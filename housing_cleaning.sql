@@ -171,6 +171,18 @@ from HousingPortfolioProject.dbo.NashvilleHousing
 group by SoldAsVacant
 
 
+-- There are several columns with NULL values inside
+-- We can i.e. replace NULL with 'N/A' in column OwnerName
+
+select OwnerName, ISNULL(OwnerName, 'N/A') as ModifiedOwnerName
+from HousingPortfolioProject.dbo.NashvilleHousing
+
+alter table HousingPortfolioProject.dbo.NashvilleHousing
+add ModifiedOwnerName nvarchar(255);
+
+update HousingPortfolioProject.dbo.NashvilleHousing
+set ModifiedOwnerName = ISNULL(OwnerName, 'N/A')
+
 
 -- We can now remove any redundant columns as we have either converted or split their contents
 
@@ -179,7 +191,7 @@ from HousingPortfolioProject.dbo.NashvilleHousing
 
 
 alter table HousingPortfolioProject.dbo.NashvilleHousing
-drop column OwnerAddress, TaxDistrict, PropertyAddress, SaleDate
+drop column OwnerName, OwnerAddress, TaxDistrict, PropertyAddress, SaleDate
 
 
 
