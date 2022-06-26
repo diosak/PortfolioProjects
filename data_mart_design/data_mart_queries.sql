@@ -181,11 +181,11 @@ select avg(Crime.ViolentCrime) as average_violence
 from Crime.FactCrime as Crime
 
 --any City with violence above 116 is considered a place where violent crimes are likely to occur
-with total_violentcrimes ([City], [State], total_violence) as
+with city_violentcrimes ([City], [State], city_violence) as
 (
 select CrimeCity.[City],
 	CrimeState.[State],
-	sum(Crime.ViolentCrime) as total_violence
+	avg(Crime.ViolentCrime) as city_violence
 from Crime.FactCrime as Crime
 join Crime.DimCity as CrimeCity on Crime.CityID = CrimeCity.CityID
 join Crime.DimState as CrimeState on CrimeCity.StateID = CrimeState.StateID
@@ -197,13 +197,14 @@ group by CrimeCity.[City],
 select AVG(Crime.ViolentCrime)
 from Crime.FactCrime as Crime
 )
-select total_violentcrimes.[City],
-	total_violentcrimes.[State],
-	total_violence,
+select city_violentcrimes.[City],
+	city_violentcrimes.[State],
+	city_violence,
 	case
-		when total_violence >= average_violence*3/2 then 'Very Likely'
-		when total_violence >= average_violence then 'Likely'
-		when total_violence >= average_violence/2 then 'Unlikely'
+		when city_violence >= average_violence*3/2 then 'Very Likely'
+		when city_violence >= average_violence then 'Likely'
+		when city_violence >= average_violence/2 then 'Unlikely'
 		else 'Very Unlikely'
 	end as violence_occurence
-from total_violentcrimes, average_violence
+from city_violentcrimes, average_violence
+order by 3 desc
